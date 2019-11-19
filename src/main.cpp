@@ -9,18 +9,20 @@ namespace rd = richdem;
 namespace dh = richdem::dephier;
 
 int main(int argc, char **argv){
-  if(argc!=4){
-    std::cout<<"Syntax: "<<argv[0]<<" <Input> <Output> <Ocean Level>"<<std::endl;
+  if(argc!=5){
+    std::cout<<"Syntax: "<<argv[0]<<" <Input> <Output> <outgraph> <Ocean Level>"<<std::endl;
     return -1;
   }
 
   const std::string in_name     = argv[1];
   const std::string out_name    = argv[2];
-  const float       ocean_level = std::stod(argv[3]);
+  const std::string out_graph   = argv[3];
+  const float       ocean_level = std::stod(argv[4]);
 
   std::cout<<"m Processing    = "<<argv[1]<<std::endl;
   std::cout<<"m Output prefix = "<<argv[2]<<std::endl;
-  std::cout<<"m Ocean level   = "<<argv[3]<<std::endl;
+  std::cout<<"m Output graph  = "<<argv[3]<<std::endl;
+  std::cout<<"m Ocean level   = "<<argv[4]<<std::endl;
 
   rd::Timer timer_io;
   timer_io.start();
@@ -58,6 +60,15 @@ int main(int argc, char **argv){
       wtd(i) += topo(i);
 
   SaveAsNetCDF(wtd,out_name+"-flooded.nc","value");
+
+  //TODO: Remove. For viewing test cases.
+    //GraphViz dot-style output for drawing depression hierarchy graphs.
+    std::ofstream fgraph(out_graph);
+    fgraph<<"{\n";
+    for(unsigned int i=0;i<deps.size();i++){
+      fgraph<<i<<":"<<deps[i].parent<<", \n";
+    }
+    fgraph<<"}\n";
 
   rd::FillDepressions<rd::Topology::D8>(topo);
   SaveAsNetCDF(topo,out_name+"-filled.nc","value");
