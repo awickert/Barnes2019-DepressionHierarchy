@@ -64,11 +64,12 @@ int main(int argc, char **argv){
   //TODO: Remove. For viewing test cases.
     //GraphViz dot-style output for drawing depression hierarchy graphs.
     std::ofstream fgraph(out_graph);
-    fgraph<<"{\n";
-    for(unsigned int i=0;i<deps.size();i++){
-      fgraph<<i<<":"<<deps[i].parent<<", \n";
+    fgraph<<"from_node,to_node\n";
+    // Start on 1 so we don't see the random memory contents of where
+    // the "ocean" goes
+    for(unsigned int i=1;i<deps.size();i++){
+      fgraph<<i<<","<<deps[i].parent<<"\n";
     }
-    fgraph<<"}\n";
 
   rd::FillDepressions<rd::Topology::D8>(topo);
   SaveAsNetCDF(topo,out_name+"-filled.nc","value");
